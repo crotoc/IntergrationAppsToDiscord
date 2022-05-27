@@ -1,0 +1,88 @@
+---
+title: "connect reddit to discord"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 2
+---
+
+```{r}
+suppressMessages(library("myutils"))
+suppressMessages(using("knitr"))
+opts_chunk$set(tidy.opts=list(width.cutoff=75),tidy=TRUE)
+
+```
+
+How to set a new option for R chunk
+
+```{r setup, echo = FALSE, eval = !opt$asRmdPart}
+str_break = function(x, width = 80L) {
+    for(i in 1:length(x)){
+        n = nchar(x[i])
+        if (n > width){ 
+            n1 = seq(1L, n, by = width)
+            n2 = seq(width, n, by = width)
+            if (n %% width != 0) n2 = c(n2, n)
+            tmp <- substring(x[i], n1, n2)
+            x[i] <- paste(tmp,collapse="\n")
+        }
+    }
+    x
+}
+
+hook_source = knit_hooks$get('source')
+knit_hooks$set(source = function(x, options) {
+    ## this hook is used only when the linewidth option is not NULL
+    if (!is.null(n <- options$linewidth)) {
+	x = knitr:::split_lines(x)
+        ## any lines wider than n should be wrapped
+        if (any(nchar(x) > n)) x = str_break(x, width = n)
+        x = paste(x, collapse = '\n')
+    }
+    hook_source(x, options)
+})
+```
+
+
+
+```{r, label = "getopt",eval = FALSE}
+suppressMessages(require(ggplot2))
+suppressMessages(require(dplyr))
+suppressMessages(require(magrittr))
+suppressMessages(require(reshape2))
+suppressMessages(require(data.table))
+suppressMessages(require(ggforce))
+suppressMessages(require(gtools))
+suppressMessages(require(RColorBrewer))
+suppressMessages(require(gtools))
+suppressMessages(library(ggpubr))
+suppressMessages(library(ggforce))
+suppressMessages(library(gtable))
+suppressMessages(library(grid))
+suppressMessages(library(gridExtra))
+suppressMessages(library(extrafont))
+loadfonts()
+
+library("myutils")
+using("optparse")
+
+option <- myoption()
+option_list <- c(option$table,
+                 option$plot,
+                 option$general
+                 )
+
+opt <- parse_args(OptionParser(option_list=c(option_list)))
+
+```
+
+```{bash, label = "refresh-token", linewidth = 85, eval=opt$eval}
+
+export praw_client_id='fE-qK2c4_Ms2gO-K7KvoVA'
+export praw_client_secret='hOLKBStyqGcT7dVo1Uzz1mfRL63ABg'
+python reddit.refresh.token.py
+
+```
+
+
+
